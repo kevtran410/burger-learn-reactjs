@@ -25,18 +25,26 @@ class BurgerBuilder extends Component {
     error: false
   };
 
+  _unmounted = false;
+
   componentDidMount () {
     axios.get('https://my-burger-app-9776c.firebaseio.com/ingredients.json')
       .then(
         response => {
+          if (this._unmounted) return;
           this.setState({ingredients: response.data});
         }
       )
       .catch(
         error => {
+          if (this._unmounted) return;
           this.setState({error: true});
         }
       );
+  }
+
+  componentWillUnmount () {
+    this._unmounted = true;
   }
 
   updatePurchasableState (ingredients) {
@@ -90,31 +98,19 @@ class BurgerBuilder extends Component {
   };
 
   purchaseContinueHandler = () => {
-    this.setState({loading: true});
-    const order = {
-      ingredients: this.state.ingredients,
-      price: this.state.totalPrice,
-      customer: {
-        name: 'kevin',
-        address: {
-          street: 'test street 1',
-          zipCode: '100000',
-          country: 'Vietnam'
-        },
-        email: 'kevtran.410@gmail.com'
-      }
-    };
-    axios.post('/orders.json', order)
-      .then(
-        response => {
-          this.setState({loading: false, purchasing: false});
-        }
-      )
-      .catch(
-        error => {
-          this.setState({loading: false, purchasing: false});
-        }
-      );
+    // this.setState({loading: true});
+
+    const queryParams = [];
+    for (let i in this.state.ingredients) {
+      queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]));
+    }
+    queryParams.push('price=' + this.state.totalPrice);
+    const queryString = queryParams.join('&');
+
+    this.props.history.push({
+      pathname: '/checkout',
+      search: queryString
+    });
   };
 
   render() {
