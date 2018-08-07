@@ -17,7 +17,7 @@ const reducer = (state = initialState, action) => {
       const newOrder = {
         ...action.orderData,
         id: action.orderId
-      }
+      };
       return updateObject(state, {
         loading: false,
         purchased: true,

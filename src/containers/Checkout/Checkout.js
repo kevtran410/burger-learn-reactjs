@@ -9,14 +9,14 @@ class Checkout extends Component {
 
   checkoutCancelledHandler = () => {
     this.props.history.goBack();
-  }
+  };
 
   checkoutContinuedHandler = () => {
     this.props.history.replace('/checkout/contact-data');
-  }
+  };
 
   render() {
-    let summary = <Redirect to="/" />
+    let summary = <Redirect to="/" />;
     const purchaseRedirect = this.props.purchased ?  <Redirect to="/" /> : null;
     if (this.props.ings) {
       summary = <div>
